@@ -14,7 +14,11 @@ class EnsembledEnv(gym.Env):
 
         # Define action and observation spaces
         self.action_space = spaces.Box(low=-2.0, high=2.0, shape=(1,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self.input_dim - 1,), dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=np.array([-1.0, -1.0, -8.0], dtype=np.float32),
+            high=np.array([1.0, 1.0, 8.0], dtype=np.float32),
+            dtype=np.float32
+        )
 
         self.state = None
         self.steps_elapsed = 0

@@ -76,8 +76,8 @@ def main():
 
 
     agent = PRIMORLPolicy(env)
-    agent.train(total_timesteps=Constants.PRIMORL_AGENT_MAX_TIME_STEPS)
-
+    agent.train(total_timesteps=Constants.PRIMORL_AGENT_LEARNING_TOTAL_TIME_STEPS)
+    agent.save()
 
 
 

@@ -25,15 +25,14 @@ class PRIMORLPolicy:
     def __init__(self, env):
         self.env = env
         self.logger = TrainingLogger()
-        self.model = None
+        self.model = SAC("MlpPolicy", self.env, verbose=1)
 
     def train(self, total_timesteps):
-        self.model = SAC("MlpPolicy", self.env, verbose=1)
         self.model.learn(total_timesteps=total_timesteps,
                          log_interval=10,
                          callback=self.logger)
 
-    def save(self, policy_index):
+    def save(self):
         """Save the trained policy and reward plot."""
         # Save the model
         base_policy_filepath, base_policy_name = DataUtils.get_new_PRIMORL_agent_filepath()
@@ -45,7 +44,7 @@ class PRIMORLPolicy:
         # Plot rewards
         plt.figure(figsize=(10, 6))
         plt.plot(timesteps_rewards, rewards, label="Rewards", marker='o')
-        plt.title(f"Rewards During Training (Policy {policy_index})")
+        plt.title(f"Rewards During Training (Policy {base_policy_name})")
         plt.xlabel("Timesteps")
         plt.ylabel("Reward")
         plt.grid(True)
