@@ -1,0 +1,16 @@
+
+ENV_NAME = 'Pendulum-v1'
+
+ENV_DIR_NAME = ENV_NAME
+
+BASE_POLICY_TRAIN_TOTAL_TIME_STEPS = 10000
+
+DATA_DIR_NAME = 'Data'
+FIGS_DIR_NAME = 'Figures'
+BASE_POLICIES_DIR_NAME = 'BasePolicies'
+MODEL_DIR_NAME = 'Models'
+TRAJECTORIES_DIR_NAME = 'Trajectories'
+
+
+
+
