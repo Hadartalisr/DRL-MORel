@@ -29,7 +29,7 @@ class PRIMORLPolicy:
 
     def train(self, total_timesteps):
         self.model.learn(total_timesteps=total_timesteps,
-                         log_interval=10,
+                         log_interval=100,
                          callback=self.logger)
 
     def save(self):

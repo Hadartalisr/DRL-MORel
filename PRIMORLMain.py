@@ -62,7 +62,7 @@ def main():
     # Train dynamics ensemble
     dynamics_ensemble.train(
         dataloader=dataloader,
-        epochs=Constants.PRIMORL_MODEL_NUMBER_OF_EPOCHS,
+        epochs=Constants.PRIMORL_MODEL_LEARNING_NUMBER_OF_EPOCHS,
         optimizers=optimizers,
         loss_fns=loss_fns,
         summary_writer=summary_writer
@@ -72,6 +72,7 @@ def main():
                        input_dim=input_dim,
                        output_dim=output_dim,
                        timeout_steps=Constants.PRIMORL_MODEL_MAX_TIME_STEPS,
+                       uncertain_threshold= Constants.PRIMORL_UNCERTAINTY_THRESHOLD,
                        uncertain_penalty=Constants.PRIMORL_UNCERTAINTY_PENALTY)
 
 

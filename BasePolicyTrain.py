@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import matplotlib.pyplot as plt
 from stable_baselines3 import DDPG
@@ -21,7 +23,7 @@ class TrainingLogger(BaseCallback):
         self.rewards.append((self.num_timesteps, reward))
         return True
 
-def train_and_save_policy(env, policy_index):
+def train_and_save_policy(env, policy_index, total_timesteps):
     """
     Train a single policy and save its model and reward plot.
     """
@@ -34,7 +36,7 @@ def train_and_save_policy(env, policy_index):
 
     # Create and train the model
     base_policy = DDPG("MlpPolicy", env, action_noise=action_noise, verbose=1)
-    base_policy.learn(total_timesteps=Constants.BASE_POLICY_TRAIN_TOTAL_TIME_STEPS,
+    base_policy.learn(total_timesteps=total_timesteps,
                       log_interval=10,
                       callback=training_logger)
 
@@ -60,10 +62,12 @@ def train_and_save_policy(env, policy_index):
 
 def main():
     env = EnvUtils.get_env()
-    number_of_policies = 5
+    number_of_policies = 100
     for i in range(number_of_policies):
+        total_timesteps = random.randint(Constants.BASE_POLICY_TRAIN_MIN_TOTAL_TIME_STEPS,
+                                         Constants.BASE_POLICY_TRAIN_MAX_TOTAL_TIME_STEPS)
         print(f"Training policy {i + 1}/{number_of_policies}")
-        train_and_save_policy(env, i + 1)
+        train_and_save_policy(env, i + 1, total_timesteps)
     env.close()
 
 if __name__ == "__main__":

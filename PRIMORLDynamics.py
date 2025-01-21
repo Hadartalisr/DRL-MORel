@@ -26,9 +26,8 @@ class DynamicsNet(nn.Module):
 
 
 class PRIMORLDynamics:
-    def __init__(self, input_dim, output_dim, n_models, n_neurons, threshold=1.5, activation=nn.ReLU):
+    def __init__(self, input_dim, output_dim, n_models, n_neurons, activation=nn.ReLU):
         self.n_models = n_models
-        self.threshold = threshold
         self.models = [DynamicsNet(input_dim, output_dim, n_neurons, activation) for _ in range(n_models)]
 
     def forward(self, model_idx, x):
@@ -70,11 +69,3 @@ class PRIMORLDynamics:
         with torch.no_grad():
             return torch.stack([model(x) for model in self.models])
 
-
-    def usad(self, predictions):
-        """
-        Compute uncertainty based on the predictions.
-        For example, check if the predictions' variance exceeds a threshold.
-        """
-        distances = torch.std(predictions, dim=0)  # Example: Standard deviation across models
-        return torch.any(distances > self.threshold).item()

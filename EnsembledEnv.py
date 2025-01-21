@@ -4,13 +4,14 @@ import gymnasium as gym
 from gymnasium import spaces
 
 class EnsembledEnv(gym.Env):
-    def __init__(self, dynamics_model, input_dim, output_dim, timeout_steps=300, uncertain_penalty=-100):
+    def __init__(self, dynamics_model, input_dim, output_dim, timeout_steps, uncertain_threshold, uncertain_penalty=-100):
         super(EnsembledEnv, self).__init__()
         self.dynamics_model = dynamics_model
         self.uncertain_penalty = uncertain_penalty
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.timeout_steps = timeout_steps
+        self.uncertain_threshold = uncertain_threshold
 
         # Define action and observation spaces
         self.action_space = spaces.Box(low=-2.0, high=2.0, shape=(1,), dtype=np.float32)
@@ -51,8 +52,8 @@ class EnsembledEnv(gym.Env):
         self.state = next_obs
 
         # Check for uncertainty
-        # uncertain = self.dynamics_model.usad(predictions.numpy())
-        uncertain = False
+        uncertain = self.usad(predictions)
+        # uncertain = False
 
         reward_out = torch.mean(rewards).item()
 
@@ -64,6 +65,14 @@ class EnsembledEnv(gym.Env):
         done = uncertain or self.steps_elapsed > self.timeout_steps
 
         return next_obs.numpy(), reward_out, done, {"HALT": uncertain}, {}
+
+    def usad(self, predictions):
+        """
+        Compute uncertainty based on the predictions.
+        For example, check if the predictions' variance exceeds a threshold.
+        """
+        distances = torch.std(predictions, dim=0)
+        return sum(distances) > self.uncertain_threshold
 
     def render(self, mode="human"):
         """
