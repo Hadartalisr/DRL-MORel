@@ -4,9 +4,7 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 from torch.utils.data import DataLoader, Dataset
-from torch.utils.tensorboard import SummaryWriter
 from DataUtils import DataUtils
-import Constants
 
 
 class DynamicsNet(nn.Module):
@@ -27,30 +25,8 @@ class DynamicsNet(nn.Module):
         return x
 
 
-class TrajectoryDataset(Dataset):
-    def __init__(self, trajectory_files):
-        self.trajectory_files = trajectory_files
-
-    def __len__(self):
-        return len(self.trajectory_files)
-
-    def __getitem__(self, idx):
-        file_path = self.trajectory_files[idx]
-        sars_array = DataUtils.load_trajectory_as_sars_array(file_path)
-        states, actions, rewards, next_states = zip(*sars_array)
-
-        states = np.array(states)
-        actions = np.array(actions)
-        rewards = np.array(rewards).reshape(-1, 1)
-        next_states = np.array(next_states)
-
-        inputs = np.hstack((states, actions))
-        targets = np.hstack((next_states, rewards))
-
-        return torch.tensor(inputs, dtype=torch.float32), torch.tensor(targets, dtype=torch.float32)
-
-class DynamicsEnsemble():
-    def __init__(self, input_dim, output_dim, n_models=4, n_neurons=512, threshold=1.5, activation=nn.ReLU):
+class PRIMORLDynamics:
+    def __init__(self, input_dim, output_dim, n_models, n_neurons, threshold=1.5, activation=nn.ReLU):
         self.n_models = n_models
         self.threshold = threshold
         self.models = [DynamicsNet(input_dim, output_dim, n_neurons, activation) for _ in range(n_models)]
@@ -94,45 +70,3 @@ class DynamicsEnsemble():
         with torch.no_grad():
             return torch.stack([model(x) for model in self.models])
 
-# Main training function
-def main():
-    summary_writer = SummaryWriter(log_dir="tensorboard_logs")
-
-    # Get trajectory files
-    trajectory_files = DataUtils.get_files_paths(DataUtils.get_trajectories_data_dir_name())
-
-    # Create dataset and dataloader
-    dataset = TrajectoryDataset(trajectory_files)
-    dataloader = DataLoader(dataset,
-                            batch_size=Constants.MOREL_BATCH_SIZE,
-                            shuffle=True)
-
-    # Initialize dynamics ensemble
-    sample_input, _ = dataset[0]
-    input_dim = sample_input.shape[1]
-    output_dim = dataset[0][1].shape[1]
-    dynamics_ensemble = DynamicsEnsemble(input_dim,
-                                         output_dim,
-                                         n_models=Constants.MOREL_ENSEMBLE_SIZE)
-
-    # Prepare optimizers and loss functions
-    optimizers = [torch.optim.Adam(model.parameters(), lr=1e-3) for model in dynamics_ensemble.models]
-    loss_fns = [nn.MSELoss() for _ in range(dynamics_ensemble.n_models)]
-
-    # Train dynamics ensemble
-    dynamics_ensemble.train(
-        dataloader=dataloader,
-        epochs=10,
-        optimizers=optimizers,
-        loss_fns=loss_fns,
-        summary_writer=summary_writer
-    )
-
-    # Save trained models
-    save_dir = DataUtils.get_model_data_dir_name()
-    dynamics_ensemble.save(save_dir)
-
-    print(f"Models saved to {save_dir}")
-
-if __name__ == "__main__":
-    main()
