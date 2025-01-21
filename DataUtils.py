@@ -42,9 +42,24 @@ class DataUtils:
         return base_policies_dir_name
 
     @staticmethod
+    def get_PRIMORL_agent_data_dir_name():
+        env_data_dir_name = DataUtils.get_env_data_dir_name()
+        base_policies_dir_name = f"{env_data_dir_name}/{Constants.PRIMORL_AGENT_DIR_NAME}"
+        DataUtils.create_dir_if_not_exists(base_policies_dir_name)
+        return base_policies_dir_name
+
+
+    @staticmethod
     def get_base_policies_figs_dir_name():
         env_figs_dir_name = DataUtils.get_env_figs_dir_name()
         base_policies_figs_dir_name = f"{env_figs_dir_name}/{Constants.BASE_POLICIES_DIR_NAME}"
+        DataUtils.create_dir_if_not_exists(base_policies_figs_dir_name)
+        return base_policies_figs_dir_name
+
+    @staticmethod
+    def get_PRIMORL_agent_figs_dir_name():
+        env_figs_dir_name = DataUtils.get_env_figs_dir_name()
+        base_policies_figs_dir_name = f"{env_figs_dir_name}/{Constants.PRIMORL_AGENT_DIR_NAME}"
         DataUtils.create_dir_if_not_exists(base_policies_figs_dir_name)
         return base_policies_figs_dir_name
 
@@ -80,6 +95,12 @@ class DataUtils:
         base_policies_dir_name = DataUtils.get_base_policies_data_dir_name()
         unique_str = DataUtils.generate_unique_string_uuid()
         return f"{base_policies_dir_name}/{unique_str}", unique_str
+
+    @staticmethod
+    def get_new_PRIMORL_agent_filepath():
+        dir_name = DataUtils.get_PRIMORL_agent_data_dir_name()
+        unique_str = DataUtils.generate_unique_string_uuid()
+        return f"{dir_name}/{unique_str}", unique_str
 
     @staticmethod
     def generate_unique_string_uuid(prefix=""):

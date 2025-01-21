@@ -36,7 +36,7 @@ class PRIMORLPolicy:
     def save(self, policy_index):
         """Save the trained policy and reward plot."""
         # Save the model
-        base_policy_filepath, base_policy_name = DataUtils.get_new_base_policy_filepath()
+        base_policy_filepath, base_policy_name = DataUtils.get_new_PRIMORL_agent_filepath()
         self.model.save(base_policy_filepath)
 
         # Extract and plot data
@@ -51,7 +51,7 @@ class PRIMORLPolicy:
         plt.grid(True)
         plt.legend()
 
-        base_policies_figs_dir_name = DataUtils.get_base_policies_figs_dir_name()
+        base_policies_figs_dir_name = DataUtils.get_PRIMORL_agent_figs_dir_name()
         plt.savefig(base_policies_figs_dir_name + f"/{base_policy_name}.png")
         plt.close()
 

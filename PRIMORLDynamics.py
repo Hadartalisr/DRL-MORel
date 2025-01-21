@@ -70,3 +70,11 @@ class PRIMORLDynamics:
         with torch.no_grad():
             return torch.stack([model(x) for model in self.models])
 
+
+    def usad(self, predictions):
+        """
+        Compute uncertainty based on the predictions.
+        For example, check if the predictions' variance exceeds a threshold.
+        """
+        distances = torch.std(predictions, dim=0)  # Example: Standard deviation across models
+        return torch.any(distances > self.threshold).item()

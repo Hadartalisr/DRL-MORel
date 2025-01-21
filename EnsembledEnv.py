@@ -13,7 +13,7 @@ class EnsembledEnv(gym.Env):
         self.timeout_steps = timeout_steps
 
         # Define action and observation spaces
-        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(self.input_dim - 1,), dtype=np.float32)
+        self.action_space = spaces.Box(low=-2.0, high=2.0, shape=(1,), dtype=np.float32)
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self.input_dim - 1,), dtype=np.float32)
 
         self.state = None
@@ -34,9 +34,9 @@ class EnsembledEnv(gym.Env):
         """
         action = torch.tensor(action, dtype=torch.float32)
 
-        # Predict next state and reward using the dynamics model
+        # Predict next state and reward using all models in the dynamics model ensemble
         state_action = torch.cat([self.state, action], dim=-1)  # Ensure dimensions align correctly
-        predictions = self.dynamics_model.predict(state_action.unsqueeze(0))
+        predictions = self.dynamics_model.predict(state_action)
 
         deltas = predictions[:, 0:self.output_dim - 1]
         rewards = predictions[:, -1]
@@ -47,7 +47,8 @@ class EnsembledEnv(gym.Env):
         self.state = next_obs
 
         # Check for uncertainty
-        uncertain = self.dynamics_model.usad(predictions.numpy())
+        # uncertain = self.dynamics_model.usad(predictions.numpy())
+        uncertain = False
 
         reward_out = torch.mean(rewards).item()
 
@@ -58,7 +59,7 @@ class EnsembledEnv(gym.Env):
 
         done = uncertain or self.steps_elapsed > self.timeout_steps
 
-        return next_obs.numpy(), reward_out, done, {"HALT": uncertain}
+        return next_obs.numpy(), reward_out, done, {"HALT": uncertain}, {}
 
     def render(self, mode="human"):
         """
