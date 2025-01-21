@@ -45,12 +45,12 @@ def generate_trajectory(env, policy):
 if __name__ == "__main__":
     env = EnvUtils.get_env()
 
-    for i in range(1):
+    for i in range(100):
         policy_dir_name = DataUtils.get_base_policies_data_dir_name()
         policy_filepath = DataUtils.get_random_file_path(policy_dir_name)
         print(f"Loading policy from {policy_filepath}")
 
         policy_network = DDPG.load(policy_filepath, env=env)
-        generate_trajectories(env, policy_network, number_of_trajectories=1)
+        generate_trajectories(env, policy_network, number_of_trajectories=10)
 
     env.close()
