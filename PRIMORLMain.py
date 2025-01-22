@@ -56,7 +56,7 @@ def main():
                                         n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER)
 
     # Prepare optimizers and loss functions
-    optimizers = [torch.optim.Adam(model.parameters(), lr=1e-3) for model in dynamics_ensemble.models]
+    optimizers = [torch.optim.Adam(model.parameters(), lr=1e-4) for model in dynamics_ensemble.models]
     loss_fns = [nn.MSELoss() for _ in range(dynamics_ensemble.n_models)]
 
     # Train dynamics ensemble

@@ -25,7 +25,7 @@ class PRIMORLPolicy:
     def __init__(self, env):
         self.env = env
         self.logger = TrainingLogger()
-        self.model = SAC("MlpPolicy", self.env, verbose=1)
+        self.model = SAC("MlpPolicy", self.env, verbose=1, learning_rate=1e-4)
 
     def train(self, total_timesteps):
         self.model.learn(total_timesteps=total_timesteps,
