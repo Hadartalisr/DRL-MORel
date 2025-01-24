@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from stable_baselines3 import DDPG
 
@@ -6,6 +8,7 @@ from stable_baselines3 import DDPG
 
 from EnvUtils import EnvUtils
 from DataUtils import DataUtils
+from BasePolicy import BasePolicy
 
 ######################################################
 
@@ -18,7 +21,7 @@ def generate_trajectories(env, policy, number_of_trajectories):
         states, actions, rewards = generate_trajectory(env, policy)
         DataUtils.save_trajectory(states, actions, rewards)
 
-def generate_trajectory(env, policy, policy_name, should_plot=False):
+def generate_trajectory(env, policy, should_plot=False, policy_name=""):
     """
     Generate a single trajectory and return states, actions, and rewards.
     """
@@ -47,7 +50,7 @@ def generate_trajectory(env, policy, policy_name, should_plot=False):
     return np.array(states), np.array(actions), np.array(rewards)
 
 
-def plot_trajectory(states, actions, rewards, policy_name):
+def plot_trajectory(states, actions, rewards, policy_name="", should_save=True):
 
     """
     Plot states, actions, and rewards from a single trajectory.
@@ -99,21 +102,32 @@ def plot_trajectory(states, actions, rewards, policy_name):
     plt.grid()
 
     plt.tight_layout()
-    plt.savefig(base_policies_figs_dir_name + f"/{policy_name}.png")
+    if should_save:
+        plt.savefig(base_policies_figs_dir_name + f"/{policy_name}.png")
+    else:
+        plt.show()
     plt.close()
+
+
+def plot_trajectory_from_file_name(file_name):
+    trajectories_data_dir_name = DataUtils.get_trajectories_data_dir_name()
+    trajectory_file_name = f"{trajectories_data_dir_name}/{file_name}"
+    states, actions, rewards = DataUtils.load_trajectory(trajectory_file_name)
+    plot_trajectory(states, actions, rewards, should_save=False)
 
 
 
 # Main code
 if __name__ == "__main__":
+    # plot trajectory
+    # plot_trajectory_from_file_name("ff583718-d6a5-478c-8f3a-859e7218906f.npz")
+
     env = EnvUtils.get_env()
-
-    for i in range(300):
-        policy_dir_name = DataUtils.get_base_policies_data_dir_name()
-        policy_filepath = DataUtils.get_random_file_path(policy_dir_name)
-        print(f"Loading policy from {policy_filepath}")
-
-        policy_network = DDPG.load(policy_filepath, env=env)
-        generate_trajectories(env, policy_network, number_of_trajectories=10)
-
+    policy = BasePolicy(env)
+    policies_dir_name = DataUtils.get_base_policies_data_dir_name()
+    policies_file_paths = DataUtils.get_files_paths(policies_dir_name)
+    for policy_file_path in policies_file_paths:
+        policy.load_model(policy_file_path)
+        print(f"Loading policy from {policy_file_path}")
+        generate_trajectories(env, policy, number_of_trajectories=1)
     env.close()
