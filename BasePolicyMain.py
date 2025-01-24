@@ -7,7 +7,7 @@ from BasePolicyTrainer import BasePolicyTrainer
 def main():
     env = EnvUtils.get_env()
     policy = BasePolicy(env)
-    number_of_iterations = 100
+    number_of_iterations = 130
     total_time_steps_per_iteration = 100
     total_time_steps = 0
     for i in range(number_of_iterations):
