@@ -125,9 +125,9 @@ if __name__ == "__main__":
     env = EnvUtils.get_env()
     policy = BasePolicy(env)
     policies_dir_name = DataUtils.get_base_policies_data_dir_name()
-    policies_file_paths = DataUtils.get_files_paths(policies_dir_name)
+    policies_file_paths = DataUtils.get_files_paths(policies_dir_name, "200_")
     for policy_file_path in policies_file_paths:
         policy.load_model(policy_file_path)
         print(f"Loading policy from {policy_file_path}")
-        generate_trajectories(env, policy, number_of_trajectories=20)
+        generate_trajectories(env, policy, number_of_trajectories=200)
     env.close()

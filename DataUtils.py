@@ -43,6 +43,14 @@ class DataUtils:
 
 
     @staticmethod
+    def get_PRIMORel_model_data_dir_name():
+        env_data_dir_name = DataUtils.get_env_data_dir_name()
+        dir_name = f"{env_data_dir_name}/{Constants.PROMOREL_MODEL_DIR_NAME}"
+        DataUtils.create_dir_if_not_exists(dir_name)
+        return dir_name
+
+
+    @staticmethod
     def get_MORel_model_data_dir_name():
         env_data_dir_name = DataUtils.get_env_data_dir_name()
         dir_name = f"{env_data_dir_name}/{Constants.MOREL_MODEL_DIR_NAME}"
@@ -122,19 +130,19 @@ class DataUtils:
     ######################################################
 
     @staticmethod
-    def get_files_paths(directory):
+    def get_files_paths(directory, prefix=None):
         """Returns a random file name from the given directory."""
         files = [f"{directory}/{file}" for file in os.listdir(directory) if os.path.isfile(os.path.join(directory, file))]
+        if prefix is not None:
+            files = [file for file in files if file.startswith(f"{directory}/{prefix}")]
         return files
 
     @staticmethod
     def get_random_file_path(directory, prefix=None):
         """Returns a random file name from the given directory."""
-        files = DataUtils.get_files_paths(directory)
+        files = DataUtils.get_files_paths(directory, prefix=prefix)
         if not files:
             raise FileNotFoundError("No files found in the directory.")
-        if prefix is not None:
-            files = [file for file in files if file.startswith(f"{directory}/{prefix}")]
         file_name = random.choice(files)
         return f"{file_name}"
 

@@ -10,6 +10,8 @@ from DataUtils import DataUtils
 from MORelDynamics import MORelDynamics
 from EnvEnsembled import EnvEnsembled
 from MORelPolicy import MORelPolicy
+from PRIMORelDynamics import PRIMORelDynamics
+
 
 class TrajectoryDataset(Dataset):
     def __init__(self, trajectory_files):
@@ -51,13 +53,23 @@ def dynamics_learning_main():
     input_dim = sample_input.shape[1]
     # this is already with the reward as the last index
     output_dim = dataset[0][1].shape[1]
-    MORel_dynamics_name = DataUtils.generate_unique_string_uuid()
+    dynamics_name = DataUtils.generate_unique_string_uuid()
 
-    dynamics_ensemble = MORelDynamics(input_dim=input_dim,  #TODO unite with PRIMORALDPPMAIN
-                                      output_dim=output_dim,
-                                      n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
-                                      n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
-                                      name=MORel_dynamics_name)
+    # dynamics_ensemble = MORelDynamics(input_dim=input_dim,  #TODO unite with PRIMORALDPPMAIN
+    #                                   output_dim=output_dim,
+    #                                   n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
+    #                                   n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
+    #                                   name=dynamics_name)
+
+    dynamics_ensemble = PRIMORelDynamics(input_dim=input_dim,
+                                         output_dim=output_dim,
+                                         n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
+                                         n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
+                                         clipping_norm=Constants.PRIMORL_CLIPPING_NORM,
+                                         noise_multiplier=Constants.PRIMORL_NOISE_MULTIPLIER_HIGH,
+                                         sampling_ratio=Constants.PRIMORL_SAMPLING_RATIO,
+                                         name=dynamics_name
+                                         )
 
     # Prepare optimizers and loss functions
     optimizers = [torch.optim.Adam(model.parameters(), lr=1e-4) for model in dynamics_ensemble.models]
@@ -68,7 +80,6 @@ def dynamics_learning_main():
         dataloader=dataloader,
         epochs=Constants.PRIMORL_MODEL_LEARNING_NUMBER_OF_EPOCHS,
         optimizers=optimizers,
-        loss_fns=loss_fns,
         summary_writer=summary_writer
     )
 
@@ -87,12 +98,12 @@ def policy_learning_main():
 
     # Initialize dynamics ensemble
     sample_input, _ = dataset[0]
-    # this is already with the action as the last index
+    # this is already with the action as the last indexc922b825-cdac-4a6e-95a4-04a5d9c3b326
     input_dim = sample_input.shape[1]
     # this is already with the reward as the last index
     output_dim = dataset[0][1].shape[1]
 
-    model_name = "de666a18-1a8c-48bf-8ead-8843aca025ef"
+    model_name = "c922b825-cdac-4a6e-95a4-04a5d9c3b326"
 
     dynamics_ensemble = MORelDynamics(input_dim=input_dim,  # TODO unite with PRIMORALDPPMAIN
                                       output_dim=output_dim,
@@ -120,7 +131,7 @@ def policy_learning_main():
 
 
 if __name__ == "__main__":
-    # dynamics_learning_main()
-    policy_learning_main()
+    dynamics_learning_main()
+    # policy_learning_main()
 
 

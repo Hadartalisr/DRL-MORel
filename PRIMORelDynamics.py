@@ -5,6 +5,8 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
+
+from DataUtils import DataUtils
 from EnsembleClipping import ensemble_clip
 
 
@@ -26,20 +28,20 @@ class DynamicsNet(nn.Module):
         return x
 
 
-class TDPModelTraining:
+class PRIMORelDynamics:
     def __init__(self, input_dim, output_dim, n_models, n_neurons,
-                 clipping_norm, noise_multiplier, sampling_ratio, activation=nn.ReLU):
+                 clipping_norm, noise_multiplier, sampling_ratio, name, activation=nn.ReLU):
         self.models = [DynamicsNet(input_dim, output_dim, n_neurons, activation) for _ in range(n_models)]
         self.clipping_norm = clipping_norm
         self.noise_multiplier = noise_multiplier
         self.sampling_ratio = sampling_ratio
+        self.n_models = n_models
+        self.name = name
 
     def forward(self, model_idx, x):
         return self.models[model_idx](x)
 
-    def train(self, dataloader, epochs, batch_size, summary_writer=None):
-        # Initialize optimizers for each model in the ensemble
-        optimizers = [torch.optim.Adam(model.parameters(), lr=1e-4) for model in self.models]
+    def train(self, dataloader, epochs, optimizers, summary_writer=None):
         # Define the loss function (Mean Squared Error)
         loss_fn = torch.nn.MSELoss()
         for epoch in range(epochs):
@@ -75,14 +77,26 @@ class TDPModelTraining:
                         summary_writer.add_scalar(f'Loss/model_{i}', loss_val, epoch * len(dataloader) + batch_idx)
                     summary_writer.add_scalar('Loss/avg', avg_loss, epoch * len(dataloader) + batch_idx)
 
-    def save(self, save_dir):
+    def save(self):
+        dir = self.get_model_data_dir()
         for i, model in enumerate(self.models):
-            torch.save(model.state_dict(), os.path.join(save_dir, f"dynamics_{i}.pt"))
+            torch.save(model.state_dict(), os.path.join(dir, f"{i}.pth"))
 
-    def load(self, load_dir):
+    def load(self):
+        dir = self.get_model_data_dir()
         for i, model in enumerate(self.models):
-            model.load_state_dict(torch.load(os.path.join(load_dir, f"dynamics_{i}.pt")))
+            model.load_state_dict(torch.load(os.path.join(dir, f"{i}.pth"), weights_only=True))
+
 
     def predict(self, x):
         with torch.no_grad():
             return torch.stack([model(x) for model in self.models])
+
+    def get_model_data_dir(self):
+        dir = DataUtils.get_PRIMORel_model_data_dir_name()
+        model_dir = os.path.join(dir, self.name)
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+        return model_dir
+
+

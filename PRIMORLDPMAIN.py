@@ -9,7 +9,7 @@ from DataUtils import DataUtils
 from MORelDynamics import MORelDynamics
 from EnvEnsembled import EnvEnsembled
 from MORelPolicy import MORelPolicy
-from TDPModelTraining import TDPModelTraining  # NEW IMPORT
+from PRIMORelDynamics import PRIMORelDynamics  # NEW IMPORT
 
 
 class TrajectoryDataset(Dataset):
@@ -51,7 +51,7 @@ def main():
     input_dim = sample_input.shape[1]
     output_dim = dataset[0][1].shape[1]
     # Prepare TDP model training
-    tdp_trainer = TDPModelTraining(input_dim=input_dim,
+    tdp_trainer = PRIMORelDynamics(input_dim=input_dim,
                                    output_dim=output_dim,
                                    n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
                                    n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
