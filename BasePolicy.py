@@ -11,4 +11,5 @@ class BasePolicy:
                                          sigma=0.1 * np.ones(action_space_dim))
         self.nn = DDPG("MlpPolicy", env, action_noise=action_noise, verbose=2)
 
-
+    def load_model(self, model_path):
+        self.nn = DDPG.load(model_path)

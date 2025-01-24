@@ -61,8 +61,8 @@ def plot_trajectory(states, actions, rewards, policy_name):
     angular_velocity = states[:, 2]
 
     # Plot angular position (cos(theta), sin(theta))
-    plt.figure(figsize=(12, 6))
-    plt.subplot(3, 1, 1)
+    plt.figure(figsize=(16, 6))
+    plt.subplot(4, 1, 1)
     plt.plot(time_steps, cos_theta, label="cos(theta)")
     plt.plot(time_steps, sin_theta, label="sin(theta)")
     plt.title("Pendulum Angular Position Over Time")
@@ -72,7 +72,7 @@ def plot_trajectory(states, actions, rewards, policy_name):
     plt.grid()
 
     # Plot angular velocity
-    plt.subplot(3, 1, 2)
+    plt.subplot(4, 1, 2)
     plt.plot(time_steps, angular_velocity, label="Angular Velocity", color="orange")
     plt.title("Pendulum Angular Velocity Over Time")
     plt.xlabel("Time Steps")
@@ -81,7 +81,7 @@ def plot_trajectory(states, actions, rewards, policy_name):
     plt.grid()
 
     # Plot actions (torque)
-    plt.subplot(3, 1, 3)
+    plt.subplot(4, 1, 3)
     plt.plot(time_steps, actions, label="Torque", color="green")
     plt.title("Applied Torque Over Time")
     plt.xlabel("Time Steps")
@@ -89,20 +89,18 @@ def plot_trajectory(states, actions, rewards, policy_name):
     plt.legend()
     plt.grid()
 
-    plt.tight_layout()
-    plt.savefig(base_policies_figs_dir_name + f"/{policy_name}_1.png")
-    plt.close()
-
-    # Plot rewards
-    plt.figure(figsize=(10, 5))
+    plt.subplot(4, 1, 4)
     plt.plot(time_steps, rewards, label="Reward", color="red")
     plt.title("Rewards Over Time")
     plt.xlabel("Time Steps")
     plt.ylabel("Reward")
     plt.legend()
     plt.grid()
-    plt.savefig(base_policies_figs_dir_name + f"/{policy_name}_2.png")
+
+    plt.tight_layout()
+    plt.savefig(base_policies_figs_dir_name + f"/{policy_name}.png")
     plt.close()
+
 
 
 # Main code

@@ -119,13 +119,16 @@ class DataUtils:
         return files
 
     @staticmethod
-    def get_random_file_path(directory):
+    def get_random_file_path(directory, prefix=None):
         """Returns a random file name from the given directory."""
         files = DataUtils.get_files_paths(directory)
         if not files:
             raise FileNotFoundError("No files found in the directory.")
+        if prefix is not None:
+            files = [file for file in files if file.startswith(f"{directory}/{prefix}")]
         file_name = random.choice(files)
         return f"{file_name}"
+
 
     @staticmethod
     def save_trajectory(states, actions, rewards):
