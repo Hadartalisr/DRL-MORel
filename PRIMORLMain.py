@@ -50,7 +50,7 @@ def main():
     input_dim = sample_input.shape[1]
     # this is already with the reward as the last index
     output_dim = dataset[0][1].shape[1]
-    dynamics_ensemble = PRIMORLDynamics(input_dim=input_dim,
+    dynamics_ensemble = PRIMORLDynamics(input_dim=input_dim, #TODO unite with PRIMORALDPPMAIN
                                         output_dim=output_dim,
                                         n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
                                         n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER)

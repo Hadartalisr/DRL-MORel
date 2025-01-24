@@ -91,10 +91,11 @@ class DataUtils:
         return f"{trajectories_dir_name}/{unique_str}.npz"
 
     @staticmethod
-    def get_new_base_policy_filepath():
+    def get_new_base_policy_filepath(training_step):
         base_policies_dir_name = DataUtils.get_base_policies_data_dir_name()
         unique_str = DataUtils.generate_unique_string_uuid()
-        return f"{base_policies_dir_name}/{unique_str}", unique_str
+        new_base_policy_name = f"{training_step}_{unique_str}"
+        return f"{base_policies_dir_name}/{new_base_policy_name}", new_base_policy_name
 
     @staticmethod
     def get_new_PRIMORL_agent_filepath():

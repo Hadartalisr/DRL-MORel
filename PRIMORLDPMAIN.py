@@ -56,8 +56,8 @@ def main():
                                    n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
                                    n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
                                    clipping_norm=Constants.PRIMORL_CLIPPING_NORM,
-                                   noise_multiplier=Constants.PRIMORL_SAMPLING_RATIO,
-                                   sampling_ratio=Constants.PRIMORL_NOISE_MULTIPLIER_HIGH
+                                   noise_multiplier=Constants.PRIMORL_NOISE_MULTIPLIER_HIGH,
+                                   sampling_ratio=Constants.PRIMORL_SAMPLING_RATIO
                                    )
 
     # Train dynamics ensemble with TDP (Epoch-based training reintroduced)
