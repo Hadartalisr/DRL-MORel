@@ -21,22 +21,21 @@ class TrainingLogger(BaseCallback):
         return True
 
 
-class PRIMORLPolicy:
+class MORelPolicy:
     def __init__(self, env):
         self.env = env
         self.logger = TrainingLogger()
-        self.model = SAC("MlpPolicy", self.env, verbose=1, learning_rate=1e-4)
+        self.nn = SAC("MlpPolicy", self.env, verbose=1, learning_rate=1e-4)
 
     def train(self, total_timesteps):
-        self.model.learn(total_timesteps=total_timesteps,
+        self.nn.learn(total_timesteps=total_timesteps,
                          log_interval=100,
                          callback=self.logger)
 
     def save(self):
-        """Save the trained policy and reward plot."""
         # Save the model
-        base_policy_filepath, base_policy_name = DataUtils.get_new_PRIMORL_agent_filepath()
-        self.model.save(base_policy_filepath)
+        base_policy_filepath, base_policy_name = DataUtils.get_new_MORLel_agent_filepath()
+        self.nn.save(base_policy_filepath)
 
         # Extract and plot data
         timesteps_rewards, rewards = zip(*self.logger.rewards)
@@ -50,10 +49,15 @@ class PRIMORLPolicy:
         plt.grid(True)
         plt.legend()
 
-        base_policies_figs_dir_name = DataUtils.get_PRIMORL_agent_figs_dir_name()
-        plt.savefig(base_policies_figs_dir_name + f"/{base_policy_name}.png")
+        MORel_policies_figs_dir_name = DataUtils.get_MORel_agent_figs_dir_name()
+        plt.savefig(MORel_policies_figs_dir_name + f"/{base_policy_name}.png")
         plt.close()
 
     def close_env(self):
         """Close the environment."""
         self.env.close()
+
+
+    def load_model(self, model_path):
+        self.nn = SAC.load(model_path)
+

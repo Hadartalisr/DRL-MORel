@@ -25,10 +25,11 @@ class DynamicsNet(nn.Module):
         return x
 
 
-class PRIMORLDynamics:
-    def __init__(self, input_dim, output_dim, n_models, n_neurons, activation=nn.ReLU):
+class MORelDynamics:
+    def __init__(self, input_dim, output_dim, n_models, n_neurons, name, activation=nn.ReLU):
         self.n_models = n_models
         self.models = [DynamicsNet(input_dim, output_dim, n_neurons, activation) for _ in range(n_models)]
+        self.name = name
 
     def forward(self, model_idx, x):
         return self.models[model_idx](x)
@@ -57,15 +58,24 @@ class PRIMORLDynamics:
                         summary_writer.add_scalar(f'Loss/model_{i}', loss_val, epoch * len(dataloader) + batch_idx)
                     summary_writer.add_scalar('Loss/avg', avg_loss, epoch * len(dataloader) + batch_idx)
 
-    def save(self, save_dir):
+    def save(self):
+        dir = self.get_model_data_dir()
         for i, model in enumerate(self.models):
-            torch.save(model.state_dict(), os.path.join(save_dir, f"dynamics_{i}.pt"))
+            torch.save(model.state_dict(), os.path.join(dir, f"{i}.pth"))
 
-    def load(self, load_dir):
+    def load(self):
+        dir = self.get_model_data_dir()
         for i, model in enumerate(self.models):
-            model.load_state_dict(torch.load(os.path.join(load_dir, f"dynamics_{i}.pt")))
+            model.load_state_dict(torch.load(os.path.join(dir, f"{i}.pth"), weights_only=True))
 
     def predict(self, x):
         with torch.no_grad():
             return torch.stack([model(x) for model in self.models])
 
+
+    def get_model_data_dir(self):
+        dir = DataUtils.get_MORel_model_data_dir_name()
+        model_dir = os.path.join(dir, self.name)
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+        return model_dir

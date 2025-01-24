@@ -6,9 +6,9 @@ import numpy as np
 
 import Constants
 from DataUtils import DataUtils
-from PRIMORLDynamics import PRIMORLDynamics
+from MORelDynamics import MORelDynamics
 from EnvEnsembled import EnvEnsembled
-from PRIMORLPolicy import PRIMORLPolicy
+from MORelPolicy import MORelPolicy
 from TDPModelTraining import TDPModelTraining  # NEW IMPORT
 
 
@@ -73,7 +73,7 @@ def main():
                        uncertain_threshold=Constants.PRIMORL_UNCERTAINTY_THRESHOLD,
                        uncertain_penalty=Constants.PRIMORL_UNCERTAINTY_PENALTY)
 
-    agent = PRIMORLPolicy(env)
+    agent = MORelPolicy(env)
     agent.train(total_timesteps=Constants.PRIMORL_AGENT_LEARNING_TOTAL_TIME_STEPS)
     agent.save()
 

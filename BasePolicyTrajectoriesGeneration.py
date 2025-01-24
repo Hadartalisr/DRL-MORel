@@ -21,7 +21,7 @@ def generate_trajectories(env, policy, number_of_trajectories):
         states, actions, rewards = generate_trajectory(env, policy)
         DataUtils.save_trajectory(states, actions, rewards)
 
-def generate_trajectory(env, policy, should_plot=False, policy_name=""):
+def generate_trajectory(env, policy, should_plot=False, should_save=True, policy_name=""):
     """
     Generate a single trajectory and return states, actions, and rewards.
     """
@@ -46,7 +46,7 @@ def generate_trajectory(env, policy, should_plot=False, policy_name=""):
     actions = np.array(actions)
     rewards = np.array(rewards)
     if should_plot:
-        plot_trajectory(states, actions, rewards, policy_name)
+        plot_trajectory(states, actions, rewards, policy_name, should_save)
     return np.array(states), np.array(actions), np.array(rewards)
 
 

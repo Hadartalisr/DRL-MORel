@@ -4,11 +4,12 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+import BasePolicyTrajectoriesGeneration
 import Constants
 from DataUtils import DataUtils
-from PRIMORLDynamics import PRIMORLDynamics
+from MORelDynamics import MORelDynamics
 from EnvEnsembled import EnvEnsembled
-from PRIMORLPolicy import PRIMORLPolicy
+from MORelPolicy import MORelPolicy
 
 class TrajectoryDataset(Dataset):
     def __init__(self, trajectory_files):
@@ -34,7 +35,7 @@ class TrajectoryDataset(Dataset):
 
 
 # Main training function
-def main():
+def dynamics_learning_main():
     summary_writer = SummaryWriter(log_dir="tensorboard_logs")
 
     # Create dataset and dataloader
@@ -50,10 +51,13 @@ def main():
     input_dim = sample_input.shape[1]
     # this is already with the reward as the last index
     output_dim = dataset[0][1].shape[1]
-    dynamics_ensemble = PRIMORLDynamics(input_dim=input_dim, #TODO unite with PRIMORALDPPMAIN
-                                        output_dim=output_dim,
-                                        n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
-                                        n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER)
+    MORel_dynamics_name = DataUtils.generate_unique_string_uuid()
+
+    dynamics_ensemble = MORelDynamics(input_dim=input_dim,  #TODO unite with PRIMORALDPPMAIN
+                                      output_dim=output_dim,
+                                      n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
+                                      n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
+                                      name=MORel_dynamics_name)
 
     # Prepare optimizers and loss functions
     optimizers = [torch.optim.Adam(model.parameters(), lr=1e-4) for model in dynamics_ensemble.models]
@@ -68,6 +72,36 @@ def main():
         summary_writer=summary_writer
     )
 
+    dynamics_ensemble.save()
+
+
+
+
+
+def policy_learning_main():
+    trajectory_files = DataUtils.get_files_paths(DataUtils.get_trajectories_data_dir_name())
+    dataset = TrajectoryDataset(trajectory_files)
+    dataloader = DataLoader(dataset,
+                            batch_size=Constants.PRIMORL_BATCH_SIZE,
+                            shuffle=True)
+
+    # Initialize dynamics ensemble
+    sample_input, _ = dataset[0]
+    # this is already with the action as the last index
+    input_dim = sample_input.shape[1]
+    # this is already with the reward as the last index
+    output_dim = dataset[0][1].shape[1]
+
+    model_name = "de666a18-1a8c-48bf-8ead-8843aca025ef"
+
+    dynamics_ensemble = MORelDynamics(input_dim=input_dim,  # TODO unite with PRIMORALDPPMAIN
+                                      output_dim=output_dim,
+                                      n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
+                                      n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
+                                      name=model_name)
+
+    dynamics_ensemble.load()
+
     env = EnvEnsembled(dynamics_model=dynamics_ensemble,
                        input_dim=input_dim,
                        output_dim=output_dim,
@@ -76,12 +110,17 @@ def main():
                        uncertain_penalty=Constants.PRIMORL_UNCERTAINTY_PENALTY)
 
 
-    agent = PRIMORLPolicy(env)
+    agent = MORelPolicy(env)
     agent.train(total_timesteps=Constants.PRIMORL_AGENT_LEARNING_TOTAL_TIME_STEPS)
+    BasePolicyTrajectoriesGeneration.generate_trajectory(env, agent,
+                                                         should_plot=True,
+                                                         should_save=False,
+                                                         policy_name=model_name)
     agent.save()
 
 
-
-
 if __name__ == "__main__":
-    main()
+    # dynamics_learning_main()
+    policy_learning_main()
+
+

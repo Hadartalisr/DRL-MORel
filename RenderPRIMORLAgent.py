@@ -1,14 +1,14 @@
 from DataUtils import DataUtils
 from EnvUtils import EnvUtils
 
-from PRIMORLPolicy import PRIMORLPolicy
+from MORelPolicy import MORelPolicy
 
 env = EnvUtils.get_human_rendering_env()
 
 # Load a saved SAC policy
-base_policies_dir_name = DataUtils.get_PRIMORL_agent_data_dir_name()
+base_policies_dir_name = DataUtils.get_MORel_agent_data_dir_name()
 policy_filepath = DataUtils.get_random_file_path(base_policies_dir_name)
-agent = PRIMORLPolicy(env)
+agent = MORelPolicy(env)
 agent.model.load(policy_filepath)
 
 vec_env = agent.model.get_env()
