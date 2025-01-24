@@ -81,3 +81,5 @@ tsconfig.lsif.json
 *.db
 
 *-checkpoint.ipynb
+
+Data/

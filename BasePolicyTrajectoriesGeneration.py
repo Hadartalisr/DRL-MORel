@@ -129,5 +129,5 @@ if __name__ == "__main__":
     for policy_file_path in policies_file_paths:
         policy.load_model(policy_file_path)
         print(f"Loading policy from {policy_file_path}")
-        generate_trajectories(env, policy, number_of_trajectories=10)
+        generate_trajectories(env, policy, number_of_trajectories=20)
     env.close()
