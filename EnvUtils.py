@@ -3,15 +3,14 @@ import gymnasium as gym
 ######################################################
 
 import Constants
-
+from EnvBase import EnvBase
 ######################################################
 
 
 class EnvUtils:
     @staticmethod
     def get_env():
-        env = gym.make(Constants.ENV_NAME)
-        return env
+        return EnvBase()
 
     @staticmethod
     def get_human_rendering_env():

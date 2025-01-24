@@ -7,7 +7,7 @@ import numpy as np
 import Constants
 from DataUtils import DataUtils
 from PRIMORLDynamics import PRIMORLDynamics
-from EnsembledEnv import EnsembledEnv
+from EnvEnsembled import EnvEnsembled
 from PRIMORLPolicy import PRIMORLPolicy
 
 class TrajectoryDataset(Dataset):
@@ -68,7 +68,7 @@ def main():
         summary_writer=summary_writer
     )
 
-    env = EnsembledEnv(dynamics_model=dynamics_ensemble,
+    env = EnvEnsembled(dynamics_model=dynamics_ensemble,
                        input_dim=input_dim,
                        output_dim=output_dim,
                        timeout_steps=Constants.PRIMORL_MODEL_MAX_TIME_STEPS,
