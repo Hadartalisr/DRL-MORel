@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from stable_baselines3 import SAC
+from stable_baselines3 import SAC, DDPG
 from stable_baselines3.common.callbacks import BaseCallback
 from DataUtils import DataUtils
 from EnvUtils import EnvUtils
@@ -25,7 +25,7 @@ class MORelPolicy:
     def __init__(self, env):
         self.env = env
         self.logger = TrainingLogger()
-        self.nn = SAC("MlpPolicy", self.env, verbose=1, learning_rate=1e-4)
+        self.nn = DDPG("MlpPolicy", self.env, verbose=1, learning_rate=1e-4)
 
     def train(self, total_timesteps):
         self.nn.learn(total_timesteps=total_timesteps,
@@ -59,5 +59,5 @@ class MORelPolicy:
 
 
     def load_model(self, model_path):
-        self.nn = SAC.load(model_path)
+        self.nn = DDPG.load(model_path)
 

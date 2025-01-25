@@ -30,7 +30,7 @@ def render_agent_policy():
     agent = MORelPolicy(env)
     vec_env = agent.nn.get_env()
 
-    dir_name = DataUtils.get_PRIMORel_model_data_dir_name()
+    dir_name = DataUtils.get_MORel_agent_data_dir_name()
     policy_filepath = DataUtils.get_random_file_path(dir_name)
     print(policy_filepath)
     agent.load_model(policy_filepath)

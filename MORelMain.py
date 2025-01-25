@@ -103,15 +103,27 @@ def policy_learning_main():
     # this is already with the reward as the last index
     output_dim = dataset[0][1].shape[1]
 
-    model_name = "c922b825-cdac-4a6e-95a4-04a5d9c3b326"
+    model_name = "68092147-eb06-4f6f-9758-ef010a845adf"
 
-    dynamics_ensemble = MORelDynamics(input_dim=input_dim,  # TODO unite with PRIMORALDPPMAIN
-                                      output_dim=output_dim,
-                                      n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
-                                      n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
-                                      name=model_name)
+    # dynamics_ensemble = MORelDynamics(input_dim=input_dim,  # TODO unite with PRIMORALDPPMAIN
+    #                                   output_dim=output_dim,
+    #                                   n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
+    #                                   n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
+    #                                   name=model_name)
+    #
+    # dynamics_ensemble.load()
+
+    dynamics_ensemble = PRIMORelDynamics(input_dim=input_dim,  # TODO unite with PRIMORALDPPMAIN
+                                         output_dim=output_dim,
+                                         n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
+                                         n_neurons=Constants.PRIMORL_MODEL_NEURONS_PER_LAYER,
+                                         clipping_norm=Constants.PRIMORL_CLIPPING_NORM,
+                                         noise_multiplier=Constants.PRIMORL_NOISE_MULTIPLIER_HIGH,
+                                         sampling_ratio=Constants.PRIMORL_SAMPLING_RATIO,
+                                         name=model_name)
 
     dynamics_ensemble.load()
+
 
     env = EnvEnsembled(dynamics_model=dynamics_ensemble,
                        input_dim=input_dim,
@@ -131,7 +143,7 @@ def policy_learning_main():
 
 
 if __name__ == "__main__":
-    dynamics_learning_main()
-    # policy_learning_main()
+    # dynamics_learning_main()
+    policy_learning_main()
 
 

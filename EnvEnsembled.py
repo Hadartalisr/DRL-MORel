@@ -58,7 +58,7 @@ class EnvEnsembled(gym.Env):
         reward_out = torch.mean(rewards).item()
 
         if uncertain:
-            reward_out = self.uncertain_penalty
+            reward_out += self.uncertain_penalty
 
         self.steps_elapsed += 1
 

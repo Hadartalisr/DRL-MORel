@@ -116,7 +116,7 @@ def main():
 
     input_dim = 4
     output_dim = 4
-    model_name = "9dfb4b33-c287-49c2-95c9-c4c20a385c16"
+    model_name = "68092147-eb06-4f6f-9758-ef010a845adf"
     # dynamics_ensemble = MORelDynamics(input_dim=input_dim,  # TODO unite with PRIMORALDPPMAIN
     #                                    output_dim=output_dim,
     #                                    n_models=Constants.PRIMORL_ENSEMBLE_SIZE,
