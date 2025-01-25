@@ -68,7 +68,7 @@ def calculate_state_reward_error(env, states, actions, rewards):
     plt.figure(figsize=(16, 12))
 
     # State Predictions vs Actual
-    plt.subplot(3, 1, 1)
+    plt.subplot(2, 1, 1)
     for dim in range(states.shape[1]):
         plt.plot(states[1:, dim], label=f"Actual State Dim {dim+1}", linestyle="--")
         plt.plot(predicted_states[:, dim], label=f"Predicted State Dim {dim+1}")
@@ -79,16 +79,16 @@ def calculate_state_reward_error(env, states, actions, rewards):
     plt.grid()
 
     # State Errors
-    plt.subplot(3, 1, 2)
-    plt.plot(state_errors, label="State Error", color="blue")
-    plt.title("State Prediction Errors")
-    plt.xlabel("Time Step")
-    plt.ylabel("Error (L2 Norm)")
-    plt.legend()
-    plt.grid()
+    # plt.subplot(3, 1, 2)
+    # plt.plot(state_errors, label="State Error", color="blue")
+    # plt.title("State Prediction Errors")
+    # plt.xlabel("Time Step")
+    # plt.ylabel("Error (L2 Norm)")
+    # plt.legend()
+    # plt.grid()
 
     # Reward Predictions vs Actual
-    plt.subplot(3, 1, 3)
+    plt.subplot(2, 1, 2)
     plt.plot(rewards, label="Actual Rewards", linestyle="--", color="orange")
     plt.plot(predicted_rewards, label="Predicted Rewards", color="green")
     plt.title("Reward Predictions vs Actual")
