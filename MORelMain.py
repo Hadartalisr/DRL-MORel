@@ -143,7 +143,7 @@ def policy_learning_main():
 
 
 if __name__ == "__main__":
-    # dynamics_learning_main()
-    policy_learning_main()
+    dynamics_learning_main()
+    # policy_learning_main()
 
 
